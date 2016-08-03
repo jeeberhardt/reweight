@@ -38,6 +38,12 @@ python reweight.py -c coordinate_2d.txt -w weights.dat -m maclaurin
 * --mlorder: Order of the maclaurin serie (Default: 10)
 * --emax: energy maximum on the free energy plot (Default: None)
 
+**Output**
+* Reweight file (Columns: X Y energy)
+* Free energy plot
+* dV avg, dV std and dV anharmonicity plot
+* HDF5 file containing raw data (pmf, histogram, dV avg, dV std, dV anharmonicity)
+
 ## Citation
 1. https://mccammon.ucsd.edu/computing/amdReweighting/
 2. Sinko W, Miao Y, de Oliveira CAF, McCammon JA (2013) Population Based Reweighting of Scaled Molecular Dynamics. The Journal of Physical Chemistry B 117(42):12759-12768.
