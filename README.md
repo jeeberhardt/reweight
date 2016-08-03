@@ -15,7 +15,7 @@ You need, at a minimum:
 I highly recommand you to install the Anaconda distribution (https://www.continuum.io/downloads) if you want a clean python environnment with nearly all the prerequisites already installed (NumPy, Matplotlib, H5py).
 
 ## How-To
-1 . First, you need to extract all the dV from the NAMD output
+1 . First, you need to extract all the dV from the NAMD output.
 ```bash
 python extract_dv.py -d directory_namd_output
 ```
@@ -24,7 +24,7 @@ python extract_dv.py -d directory_namd_output
 * -i/--interval: interval we take dV (Default: 1)
 * -o/--output: name of the output file (Default: weights.dat)
 
-2 . Now, reweighting time ! For that you will need a 2D coordinate file (coordinate reactions) and a weight file with all the dV.
+2 . Now, reweighting time ! For that you will need at least a 2D coordinate file (coordinate reactions, obtained by using your favorite reduction method like SPE (right ?))(columns: X Y) and a weight file with all the dV extracted from NAMD output (or from elsewhere like AMBER) (columns: timestep dV).
 ```bash
 python reweight.py -c coordinate_2d.txt -w weights.dat -m maclaurin
 ```
