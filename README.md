@@ -20,7 +20,7 @@ I highly recommand you to install the Anaconda distribution (https://www.continu
 python extract_dv.py -d directory_namd_output
 ```
 **Command line options**
-* -d/--dir: directory  (or list of directories) with the NAMD output ('*-prod*.out')
+* -d/--dir: directory  (or list of directories) with the NAMD output ('\*-prod\*.out')
 * -i/--interval: interval we take dV (Default: 1)
 * -o/--output: name of the output file (Default: weights.dat)
 
