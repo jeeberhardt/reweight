@@ -27,13 +27,13 @@ python extract_dv.py -d directory_namd_output
 **Output**
 * Weights file (Columns: timestep dV)
 
-2 . Now, reweighting time ! For that you will need at least a 2D coordinate file (coordinate reactions, obtained by using your favorite reduction method like SPE (right ?))(columns: X Y) and a weight file with all the dV extracted from NAMD output (or from elsewhere like AMBER) (columns: timestep dV). And of course, the number of coordinates (structures) should be equal to the number of dV.
+2 . Now, reweighting time ! For that you will need at least a 2D coordinate file (coordinate reactions, obtained by using your favorite reduction method like SPE (right ?))(columns: [frame_idx X Y] or [X Y]) and a weight file with all the dV extracted from NAMD output (or from elsewhere like AMBER) (columns: timestep dV). And of course, the number of coordinates (structures) should be equal to the number of dV.
 ```bash
 python reweight.py -c coordinate_2d.txt -w weights.dat -m maclaurin
 ```
 **Command line options**
-* -c/--coord: 2D coordinates
-* -w/--weight: weight file with all the dV
+* -c/--coord: 2D coordinates (columns: [frame_idx X Y] or [X Y])
+* -w/--weight: weight file with all the dV (columns: [timestep dV])
 * -m/--method: reweighting method (choice: pmf, maclaurin, cumulant) (Default: maclaurin)
 * -b/--binsize: size of the histogram's bins (Default: 1)
 * --cutoff: remove bins with insufficient number of structures (Default: 0)
