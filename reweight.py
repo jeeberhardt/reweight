@@ -24,7 +24,7 @@ class Reweight:
     def __init__(self, coord_file, weight_file=None):
 
         # Read coordinate and weight file
-        self.coordinates = self.read_coord_file(coord_file)
+        self.frame_idx, self.coordinates = self.read_coord_file(coord_file)
         self.dv, self.timestep = self.read_dv_file(weight_file)
 
         assert self.coordinates.shape[0] == self.dv.shape[0], "Size of coordinates and dV are not equal !"
@@ -33,13 +33,23 @@ class Reweight:
     def read_coord_file(self, coord_file, center=True):
         data = np.loadtxt(coord_file, dtype=np.float32())
 
+        if data.shape[1] == 2:
+            coord = data
+            frame_idx = np.arange(0, data.shape[0])
+        elif data.shape[1] == 3:
+            coord = data[:,1:]
+            frame_idx = data[:,0]
+        else:
+            print 'Error: Cannot read coordinates file!'
+            sys.exit(1)
+
         if center:
             # Get the middle
-            x_center = np.min(data[:,0]) + (np.max(data[:,0]) - np.min(data[:,0])) / 2.
-            y_center = np.min(data[:,1]) + (np.max(data[:,1]) - np.min(data[:,1])) / 2.
+            x_center = np.min(coord[:,0]) + (np.max(coord[:,0]) - np.min(coord[:,0])) / 2.
+            y_center = np.min(coord[:,1]) + (np.max(coord[:,1]) - np.min(coord[:,1])) / 2.
             # Center data
-            data[:,0] -= x_center
-            data[:,1] -= y_center
+            coord[:,0] -= x_center
+            coord[:,1] -= y_center
 
         """
         http://docs.scipy.org/doc/numpy/reference/generated/numpy.histogram2d.html
@@ -48,7 +58,7 @@ class Reweight:
         first dimension of the array (vertical), and y along the second dimension of the array (horizontal).
         """
         # Inverse X and Y coordinates
-        return np.fliplr(data)
+        return frame_idx, np.fliplr(coord)
 
     def read_dv_file(self, weight_file):
         data = np.loadtxt(weight_file, usecols=(0,1), dtype=np.float32())
@@ -127,7 +137,7 @@ class Reweight:
 
         # Compute pmf
         pmf = histogram / np.float32(total_structures)
-        pmf = -(1./beta) * np.log(pmf + 1E-10) # Avoid 0 in log function
+        pmf = -(1./beta) * np.log(pmf + 1E-18) # Avoid 0 in log function
         pmf[pmf == np.max(pmf)] = np.nan
         pmf = pmf - np.nanmin(pmf)
 
@@ -358,8 +368,8 @@ class Reweight:
 
         with open('reweight.txt', 'w') as w:
             for i in xrange(0, self.coordinates.shape[0]):
-                w.write('%10.5f %10.5f %10.5f\n' % (self.coordinates[i][0], self.coordinates[i][1], 
-                                                    self.result['pmf_s'][i]))
+                w.write('%010d %10.5f %10.5f %10.5f\n' % (self.frame_idx[i], self.coordinates[i][0], 
+                                                          self.coordinates[i][1], self.result['pmf_s'][i]))
 
 def plot_histogram(hist, edges, vmin=None, vmax=None, fig_name='free_energy.png', contour=True, interval=1):
 
@@ -385,7 +395,7 @@ def plot_histogram(hist, edges, vmin=None, vmax=None, fig_name='free_energy.png'
         plt.contour(X, Y, hist, n, colors='black', extent=extent)
 
     # Create picture
-    plt.imshow(hist, interpolation=None, origin='low', extent=extent, vmin=vmin, vmax=vmax)
+    plt.imshow(hist, interpolation='none', origin='low', extent=extent, vmin=vmin, vmax=vmax)
 
     # Create colorbar
     cbar_ticks = np.linspace(vmin, vmax, n+1)
