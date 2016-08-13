@@ -40,7 +40,7 @@ class Reweight:
             coord = data[:,1:]
             frame_idx = data[:,0]
         else:
-            print 'Error: Cannot read coordinates file!'
+            print 'Error: Cannot read coordinates file! (#Columns: %s)' % data.shape[1]
             sys.exit(1)
 
         if center:
@@ -279,6 +279,13 @@ class Reweight:
 
     def run(self, method, bin_size, cutoff=10, temperature=298.15, ml_order=10):
 
+        # store some variables
+        self.method = method
+        self.bin_size = bin_size
+        self.cutoff = cutoff
+        self.temperature = temperature
+        self.ml_order = ml_order
+
         # Print basic dV statistics
         self.get_dv_statistics()
 
@@ -367,6 +374,12 @@ class Reweight:
             w['dv_anh'] = self.result['dv_anh']
 
         with open('reweight.txt', 'w') as w:
+            header = '# method %s size %s cutoff %s temperature %s' 
+            header = header % (self.method, self.bin_size, self.cutoff, self.temperature)
+            if self.method == 'maclaurin':
+                header += ' mlorder %s' % self.ml_order
+            w.write('%s\n' % header)
+
             for i in xrange(0, self.coordinates.shape[0]):
                 w.write('%010d %10.5f %10.5f %10.5f\n' % (self.frame_idx[i], self.coordinates[i][0], 
                                                           self.coordinates[i][1], self.result['pmf_s'][i]))
