@@ -165,9 +165,9 @@ class Reweight:
 
         # Compute histogram with the weights
         pmf = np.histogram2d(x=self.coordinates[:,0], y=self.coordinates[:,1], bins=(edges_x, edges_y), weights=weights)[0]
-
         # Compute a simple histogram
         histogram = np.histogram2d(x=self.coordinates[:,0], y=self.coordinates[:,1], bins=(edges_x, edges_y))[0]
+
         # Select only the bins with mor than <cutoff> structures
         pmf[histogram <= cutoff] = 0.
 
@@ -374,11 +374,11 @@ class Reweight:
             w['dv_anh'] = self.result['dv_anh']
 
         with open('reweight.txt', 'w') as w:
-            header = '# method %s size %s cutoff %s temperature %s' 
+            header = 'method %s size %s cutoff %s temperature %s' 
             header = header % (self.method, self.bin_size, self.cutoff, self.temperature)
             if self.method == 'maclaurin':
                 header += ' mlorder %s' % self.ml_order
-            w.write('%s\n' % header)
+            w.write('# %s\n' % header)
 
             for i in xrange(0, self.coordinates.shape[0]):
                 w.write('%010d %10.5f %10.5f %10.5f\n' % (self.frame_idx[i], self.coordinates[i][0], 
@@ -408,7 +408,7 @@ def plot_histogram(hist, edges, vmin=None, vmax=None, fig_name='free_energy.png'
         plt.contour(X, Y, hist, n, colors='black', extent=extent)
 
     # Create picture
-    plt.imshow(hist, interpolation='none', origin='low', extent=extent, vmin=vmin, vmax=vmax)
+    plt.imshow(hist, interpolation=None, origin='low', extent=extent, vmin=vmin, vmax=vmax)
 
     # Create colorbar
     cbar_ticks = np.linspace(vmin, vmax, n+1)
